@@ -6,9 +6,9 @@
   "author": "edevars <e.devars.dev@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development webpack serve",
-    "build": "NODE_ENV=production webpack",
-    "start": "NODE_ENV=production yarn run build && node server.js"
+    "dev": "webpack serve",
+    "build": "webpack",
+    "start": "webpack && node server.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
