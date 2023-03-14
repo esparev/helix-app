@@ -1,38 +1,47 @@
-const path = require('path')
-const dotenv = require('dotenv')
+const path = require('path');
+const dotenv = require('dotenv');
+const { HotModuleReplacementPlugin } = require('webpack');
 
-dotenv.config()
+dotenv.config();
 
-const mode = process.env.NODE_ENV ?? 'production'
-const isDev = process.env.NODE_ENV !== 'production'
-const PORT = process.env.PORT
+const mode = process.env.NODE_ENV ?? 'production';
+const isDev = process.env.NODE_ENV !== 'production';
+const PORT = process.env.PORT;
+
+let entries = ['./src/app/index.tsx'];
+let plugins = [];
+
+if (isDev) {
+  entries.unshift('webpack-hot-middleware/client?path=__webpack_hmr&timeout=20000&reload=true');
+  plugins.push(new HotModuleReplacementPlugin());
+}
 
 module.exports = {
   name: 'client',
-  entry: './src/app/index.tsx',
+  entry: entries,
   mode,
   devtool: isDev ? 'eval-source-map' : undefined,
   stats: 'errors-only',
   output: {
     path: path.join(__dirname, '/dist'),
     filename: 'app.js',
-    publicPath: '/'
+    publicPath: '/',
   },
   module: {
     rules: [
       {
         test: /\.(tsx|ts)?$/,
         use: {
-          loader: "swc-loader",
+          loader: 'swc-loader',
           options: {
             jsc: {
               parser: {
-                syntax: "typescript",
+                syntax: 'typescript',
                 tsx: true,
                 minify: !isDev,
-              }
-            }
-          }
+              },
+            },
+          },
         },
         exclude: /node_modules/,
       },
@@ -47,8 +56,9 @@ module.exports = {
           },
         ],
       },
-    ]
+    ],
   },
+  plugins,
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
@@ -56,6 +66,6 @@ module.exports = {
     hot: true,
     port: PORT,
     open: true,
-    historyApiFallback: true
+    historyApiFallback: true,
   },
 };

@@ -1,11 +1,18 @@
 import express, { Express, Request, Response } from 'express';
+import { webpackMiddleware } from './middlewares/webpackMiddleware';
 import { render } from './render';
 import { config } from './config';
 import axios from 'axios';
 
 const app: Express = express();
 
-app.use(express.static('dist'));
+const isDev = process.env.NODE_ENV !== 'production';
+
+if (isDev) {
+  app.use(webpackMiddleware());
+} else {
+  app.use(express.static('dist'));
+}
 
 app.get('/galaxias', async (req: Request, res: Response) => {
   try {
